@@ -2,6 +2,7 @@ package com.ems.controller;
 
 import com.ems.dto.EmployeeDto;
 import com.ems.dto.EmployeeUpdateDto;
+import com.ems.dto.EmployeeUpdateFullDto;
 import com.ems.entity.Employee;
 import com.ems.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -33,8 +34,18 @@ public class EmployeeController {
      * @return update employee object
      */
     @PutMapping("/{id}")
-    private Employee updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeUpdateDto employeeDto){
+    private Employee updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeUpdateFullDto employeeDto){
         return service.updateEmployee(id , employeeDto);
+    }
+    /**
+     * Method to update employee details partially
+     * @param id Id of employee whom the details will update
+     * @param employeeDto request body of new updated data
+     * @return update employee object
+     */
+    @PatchMapping("/{id}")
+    private Employee partialUpdateEmployee(@PathVariable Long id , @Valid @RequestBody EmployeeUpdateDto employeeDto){
+        return service.partialUpdateEmployee(id , employeeDto);
     }
 
     /**

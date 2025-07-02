@@ -2,6 +2,7 @@ package com.ems.service;
 
 import com.ems.dto.EmployeeDto;
 import com.ems.dto.EmployeeUpdateDto;
+import com.ems.dto.EmployeeUpdateFullDto;
 import com.ems.entity.Department;
 import com.ems.entity.Employee;
 import com.ems.exception.ResourceNotFoundException;
@@ -56,7 +57,30 @@ public class EmployeeService {
      * @param request body of the newly updated employee
      * @return new employee object
      */
-    public Employee updateEmployee(Long id , EmployeeUpdateDto request){
+    public Employee updateEmployee(Long id , EmployeeUpdateFullDto request){
+        Employee employee = getEmployeeById(id);
+        Department department = departmentRepository.findById(request.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+
+        Employee manager = null;
+        if(request.getManagerId() != null){
+            manager = employeeRepository.findByIdAndIsActiveTrue(request.getManagerId()).orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+        }
+        employee.setName(request.getName());
+        employee.setAge(request.getAge());
+        employee.setEmail(request.getEmail());
+        employee.setSalary(request.getSalary());
+        employee.setManager(manager);
+        employee.setDepartment(department);
+        return employeeRepository.save(employee);
+    }
+
+    /**
+     * Method to update the employee data partially
+     * @param id of the employee whom the updation take place
+     * @param request body of the newly updated employee
+     * @return new employee object
+     */
+    public Employee partialUpdateEmployee(Long id  , EmployeeUpdateDto request){
         Employee employee = getEmployeeById(id);
         Department department = departmentRepository.findById(request.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
